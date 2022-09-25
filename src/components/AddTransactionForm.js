@@ -1,9 +1,27 @@
 import React from "react";
 
-function AddTransactionForm() {
+function AddTransactionForm({addTransaction}) {
+  function handleSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const description = formData.get("description");
+    const amount = formData.get("amount");
+    const category = formData.get("category");
+    const date = formData.get("date");
+    const transaction = { description, amount, category, date };
+    fetch("http://localhost:8001/transactions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(transaction),
+    }).then((response) => response.json())
+    .then(() => addTransaction(transaction));
+  }
+
   return (
     <div className="ui segment">
-      <form className="ui form">
+      <form className="ui form" onSubmit={handleSubmit}>
         <div className="inline fields">
           <input type="date" name="date" />
           <input type="text" name="description" placeholder="Description" />
